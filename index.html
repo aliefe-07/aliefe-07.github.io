@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Benim İlk Web Sayfam 3</title>
+  <title>Beşiktaş Web Sayfam</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <!-- Firebase SDK'leri eklendi -->
+  <!-- Firebase SDK'leri -->
   <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
   <style>
-    /* Beşiktaş Koyu Tema için CSS değişkenleri */
+    /* CSS Değişkenleri ile Temaları Yönetme */
     :root {
       --bg-color: #1a1a1a;
       --text-color: #e0e0e0;
@@ -20,10 +20,12 @@
       --nav-button-text: #000;
       --nav-button-border: #fff;
       --modal-bg: #000;
-      --modal-text: white;
+      --modal-text: #fff;
+      --shadow-color: rgba(255, 255, 255, 0.3);
+      --link-color: #e0e0e0;
+      --link-hover-color: #fff;
     }
 
-    /* Beşiktaş Açık Tema için değişkenleri güncelleyin */
     body.light-mode {
       --bg-color: #f0f0f0;
       --text-color: #333;
@@ -34,74 +36,81 @@
       --nav-button-border: #000;
       --modal-bg: #fff;
       --modal-text: #000;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+      --link-color: #333;
+      --link-hover-color: #000;
     }
 
     body {
       font-family: 'Poppins', Arial, sans-serif;
       background-color: var(--bg-color);
+      color: var(--text-color);
       margin: 0;
       padding: 0;
-      color: var(--text-color);
-      overflow: hidden;
       min-height: 100vh;
-      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     #main-content {
       display: none;
       opacity: 0;
       transition: opacity 1.2s ease-in-out;
-      overflow-y: auto;
-      height: 100vh;
-      text-align: center;
-      padding-bottom: 40px;
-    }
-
-    header, nav, footer {
-      background-color: var(--header-bg-color);
-      color: var(--header-text-color);
-      font-weight: 600;
-      border-radius: 10px;
-      margin: 10px;
-      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+      width: 100%;
+      max-width: 900px;
+      padding: 0 15px;
+      box-sizing: border-box;
     }
 
     header {
+      background-color: var(--header-bg-color);
+      color: var(--header-text-color);
       padding: 20px;
+      margin-top: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px var(--shadow-color);
+      text-align: center;
+      width: 100%;
     }
 
     nav {
+      background-color: var(--header-bg-color);
       padding: 10px;
-      margin-bottom: 20px;
+      margin-top: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px var(--shadow-color);
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
+      width: 100%;
     }
 
     nav button {
-      margin: 5px;
-      padding: 10px 20px;
+      margin: 8px;
+      padding: 12px 24px;
       background-color: var(--nav-button-bg);
       color: var(--nav-button-text);
       border: 2px solid var(--nav-button-border);
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 16px;
-      transition: 0.3s;
+      font-weight: 600;
+      transition: background-color 0.3s, color 0.3s, transform 0.2s;
     }
 
     nav button:hover {
-      background-color: #333;
-      color: #fff;
+      transform: translateY(-2px);
     }
-
-    body.light-mode nav button:hover {
-      background-color: #eee;
-      color: #000;
-    }
-
-    .content {
+    
+    .content-section {
       padding: 30px;
+      margin-top: 15px;
+      background-color: var(--header-bg-color);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px var(--shadow-color);
+      text-align: center;
     }
 
     .hidden {
@@ -109,164 +118,133 @@
     }
 
     footer {
-      padding: 10px;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: auto;
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      background-color: var(--header-bg-color);
+      color: var(--header-text-color);
+      margin-top: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px var(--shadow-color);
     }
 
     img {
-      max-width: 300px;
-      width: 100%;
+      max-width: 100%;
       height: auto;
-      object-fit: cover;
+      object-fit: contain;
       margin: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255,255,255,0.3);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px var(--shadow-color);
     }
     
-    body.light-mode img {
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    #gorseller {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
     }
 
-    /* Modals for login and messages */
     .modal {
       position: fixed;
-      top: 0; left: 0; right:0; bottom:0;
-      background: rgba(0,0,0,0.9);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 9999;
+      animation: fadeIn 0.3s;
     }
     
     .modal-box {
       background: var(--modal-bg);
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px var(--shadow-color);
       text-align: center;
-      width: 320px;
+      width: 350px;
       max-width: 90%;
       color: var(--modal-text);
-      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      animation: popIn 0.3s;
+    }
+
+    .modal-box h2 {
+      margin-top: 0;
+      color: #fff; /* Başlık rengi sabit kalsın */
+    }
+
+    body.light-mode .modal-box h2 {
+      color: #000;
     }
 
     .modal-box input {
-      width: 90%;
-      padding: 10px;
+      width: 100%;
+      padding: 12px;
       margin: 10px 0;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       font-size: 16px;
+      box-sizing: border-box;
     }
 
     .modal-box button {
-      background-color: #fff;
-      color: #000;
+      background-color: var(--nav-button-bg);
+      color: var(--nav-button-text);
       font-weight: 600;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 10px;
       cursor: pointer;
       font-size: 16px;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     .modal-box button:hover {
-      background-color: #eee;
-      color: #000;
+      transform: scale(1.05);
     }
 
     #loginError {
-      color: #f44336;
+      color: #ff4d4d;
       margin-top: 10px;
       font-weight: 600;
       display: none;
     }
     
-    /* Responsive image container */
-    #gorseller {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* Sayac gösterimi */
     #countdown {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #000;
+      background: var(--header-bg-color);
+      color: var(--header-text-color);
       padding: 10px 15px;
       border-radius: 10px;
       font-size: 20px;
       font-weight: bold;
       z-index: 999;
       display: none;
+      box-shadow: 0 4px 8px var(--shadow-color);
     }
     
-    /* Hide the message box initially */
     #messageBoxModal {
         display: none;
     }
 
-    /* Quiz styling */
-    #quiz-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .quiz-question {
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-
-    .quiz-options {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-
     .quiz-options button {
-      background-color: var(--nav-button-bg);
-      color: var(--nav-button-text);
-      border: 2px solid var(--nav-button-border);
-      padding: 10px;
-      margin: 5px 0;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
       border-radius: 10px;
       cursor: pointer;
       font-size: 16px;
-      transition: 0.3s;
+      font-weight: 600;
+      background-color: var(--nav-button-bg);
+      color: var(--nav-button-text);
+      border: 2px solid var(--nav-button-border);
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     .quiz-options button:hover {
-      background-color: #333;
-      color: #fff;
-    }
-
-    body.light-mode .quiz-options button:hover {
-      background-color: #eee;
-      color: #000;
-    }
-
-    #quiz-results {
-      margin-top: 20px;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    /* Live Scores styling */
-    #live-scores-container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
+      transform: translateY(-2px);
     }
 
     .score-card {
@@ -274,17 +252,16 @@
       border-radius: 15px;
       padding: 20px;
       margin-bottom: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      transition: box-shadow 0.3s ease-in-out;
+      box-shadow: 0 4px 8px var(--shadow-color);
+      transition: box-shadow 0.3s ease, transform 0.2s;
     }
     
     body.light-mode .score-card {
       background-color: #f8f8f8;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
     .score-card:hover {
-      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+      transform: scale(1.02);
     }
 
     .match-info {
@@ -315,68 +292,63 @@
       animation: pulse 1.5s infinite;
     }
 
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
-    #loading-scores {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-top: 20px;
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
-
   </style>
 </head>
 <body>
 
-  <!-- Login Modal -->
+  <!-- Admin Giriş Modalı -->
   <div id="loginModal" class="modal">
     <div id="loginBox" class="modal-box">
       <h2>Admin Girişi</h2>
-      <input type="text" id="username" placeholder="Kullanıcı Adı" />
-      <input type="password" id="password" placeholder="Şifre" />
-      <button onclick="checkLogin()">Giriş Yap</button>
+      <input type="text" id="username" placeholder="Kullanıcı Adı" autocomplete="off" />
+      <input type="password" id="password" placeholder="Şifre" autocomplete="off" />
+      <button onclick="window.checkLogin()">Giriş Yap</button>
       <div id="loginError">Kullanıcı adı veya şifre hatalı!</div>
     </div>
   </div>
   
-  <!-- Custom Message Box Modal -->
+  <!-- Özelleştirilmiş Mesaj Modalı -->
   <div id="messageBoxModal" class="modal">
     <div class="modal-box">
       <h3 id="messageBoxText"></h3>
-      <button onclick="closeMessageBox()">Tamam</button>
+      <button onclick="window.closeMessageBox()">Tamam</button>
     </div>
   </div>
 
   <div id="main-content">
     <header>
-      <h1>Benim İlk Web Sayfam</h1>
+      <h1>Beşiktaş Web Sayfam</h1>
     </header>
 
     <nav>
-      <button onclick="showSection('anasayfa')">Anasayfa</button>
-      <button onclick="showSection('hakkimizda')">Hakkımızda</button>
-      <button onclick="showSection('iletisim')">İletişim</button>
-      <button onclick="showSection('gorseller')">Görseller</button>
-      <button onclick="showSection('quiz')">Bilgi Yarışması</button>
-      <button onclick="showSection('canli-skorlar')">Canlı Skorlar</button>
-      <!-- Mod değiştirme butonu eklendi -->
-      <button id="modeToggleButton" onclick="toggleMode()">Açık Tema</button>
-      <!-- Kaydet ve Yükle butonları eklendi -->
-      <button id="saveButton" onclick="saveData()">Kaydet</button>
-      <button id="loadButton" onclick="loadData()">Yükle</button>
+      <button onclick="window.showSection('anasayfa')">Anasayfa</button>
+      <button onclick="window.showSection('hakkimizda')">Hakkımızda</button>
+      <button onclick="window.showSection('iletisim')">İletişim</button>
+      <button onclick="window.showSection('gorseller')">Görseller</button>
+      <button onclick="window.showSection('quiz')">Bilgi Yarışması</button>
+      <button onclick="window.showSection('canli-skorlar')">Canlı Skorlar</button>
+      <button id="modeToggleButton" onclick="window.toggleMode()">Açık Tema</button>
+      <button onclick="window.saveData()">Kaydet</button>
+      <button onclick="window.loadData()">Yükle</button>
     </nav>
 
-    <div class="content">
+    <div class="content-section">
       <div id="anasayfa">
         <h2>Hoş Geldiniz!</h2>
-        <p>Bu benim Beşiktaş temalı ilk web sayfam.</p>
+        <p>Bu benim Beşiktaş temalı ilk web sayfam. Siyah Beyaz!</p>
       </div>
       <div id="hakkimizda" class="hidden">
         <h2>Hakkımızda</h2>
-        <p>Biz web geliştirmeyi Beşiktaş sevgisiyle öğreniyoruz!</p>
+        <p>Web geliştirmeyi Beşiktaş sevgisiyle öğreniyoruz.</p>
       </div>
       <div id="iletisim" class="hidden">
         <h2>İletişim</h2>
@@ -408,141 +380,21 @@
   <div id="countdown">60</div>
 
   <script type="module">
-    // Firebase modülleri içe aktarılıyor
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Global değişkenler tanımlanıyor
+    // Uygulama durumunu tutmak için global değişkenler
     let inactivityTimer;
     let countdownInterval;
     let remainingTime = 60;
     let isLightMode = false;
     let db, auth, userId;
 
-    // Firebase ayarları ve uygulama kimliği tanımlanıyor
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = JSON.parse(__firebase_config);
-
-    // Firebase uygulamasını başlatma ve kimlik doğrulama
-    const app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            // Kullanıcı oturum açtıysa, kullanıcı kimliğini al
-            userId = user.uid;
-            console.log("Authenticated with user ID:", userId);
-        } else {
-            console.log("No user signed in. Attempting to sign in anonymously.");
-            // Kullanıcı yoksa, anonim olarak oturum aç
-            await signInAnonymously(auth);
-        }
-    });
-
-    // Özel mesaj kutusunu gösteren fonksiyon
-    function showMessageBox(message) {
-        document.getElementById('messageBoxText').textContent = message;
-        document.getElementById('messageBoxModal').style.display = 'flex';
-    }
-    
-    // Özel mesaj kutusunu kapatan ve sayfayı yeniden yükleyen fonksiyon
-    function closeMessageBox() {
-        document.getElementById('messageBoxModal').style.display = 'none';
-        location.reload();
-    }
-
-    // Fonksiyon, HTML'deki `onclick` için global hale getirildi
-    function checkLogin() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const error = document.getElementById('loginError');
-
-      if (username === "admin" && password === "1234") {
-        error.style.display = "none";
-        document.getElementById('loginModal').style.display = "none";
-        const main = document.getElementById('main-content');
-        main.style.display = "block";
-        setTimeout(() => main.style.opacity = 1, 10);
-        document.body.style.overflow = "auto";
-        document.getElementById('countdown').style.display = "block";
-        showSection('anasayfa');
-        startInactivityTimer();
-        addActivityListeners();
-      } else {
-        error.style.display = "block";
-      }
-    }
-    
-    // Tüm içeriği gizleyip, istenen bölümü gösteren fonksiyon
-    window.showSection = function(id) {
-      const sections = document.querySelectorAll('.content > div');
-      sections.forEach(sec => sec.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
-
-      if (id === 'quiz') {
-        startQuiz();
-      } else if (id === 'canli-skorlar') {
-        fetchLiveScores();
-      }
-    }
-
-    function startInactivityTimer() {
-      // Önceki sayaçları temizle
-      clearTimeout(inactivityTimer);
-      clearInterval(countdownInterval);
-      remainingTime = 60;
-      updateCountdownDisplay();
-
-      countdownInterval = setInterval(() => {
-        remainingTime--;
-        updateCountdownDisplay();
-
-        if (remainingTime <= 0) {
-          clearInterval(countdownInterval);
-          showMessageBox("1 dakika boyunca işlem yapılmadı. Oturum sonlandırılıyor.");
-        }
-      }, 1000);
-    }
-
-    function updateCountdownDisplay() {
-      document.getElementById('countdown').textContent = remainingTime;
-    }
-
-    function addActivityListeners() {
-      // Sayfadaki hareketi dinle ve sayaçı sıfırla
-      ['click', 'mousemove', 'keypress', 'scroll'].forEach(evt => {
-        document.addEventListener(evt, startInactivityTimer);
-      });
-    }
-    
-    // Mod değiştirme işlevini ekle
-    window.toggleMode = function() {
-      const body = document.body;
-      const modeToggleButton = document.getElementById('modeToggleButton');
-      body.classList.toggle('light-mode');
-      isLightMode = !isLightMode;
-
-      if (isLightMode) {
-        modeToggleButton.textContent = "Koyu Tema";
-      } else {
-        modeToggleButton.textContent = "Açık Tema";
-      }
-    }
-
-    // Kullanıcı adı ve şifre kutularında Enter tuşuna basıldığında giriş yap
-    document.getElementById('password').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') checkLogin();
-    });
-    document.getElementById('username').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') checkLogin();
-    });
-
-    // --- Bilgi Yarışması Fonksiyonları ---
+    // Quiz ve Canlı Skorlar için veriler
     const quizQuestions = [
       {
-        question: "Beşiktaş'ın 2023-2024 sezonundaki UEFA Konferans Ligi rakibi hangisidir?",
+        question: "Beşiktaş'ın 2023-2024 sezonundaki UEFA Konferans Ligi grup rakibi hangisidir?",
         options: ["Club Brugge", "Lugano", "Bodø/Glimt"],
         answer: "Club Brugge"
       },
@@ -561,6 +413,104 @@
     let currentQuestionIndex = 0;
     let score = 0;
 
+    let mockScores = [
+        { homeTeam: 'Beşiktaş', homeScore: 3, awayTeam: 'Trabzonspor', awayScore: 1, isLive: true },
+        { homeTeam: 'Galatasaray', homeScore: 0, awayTeam: 'Fenerbahçe', awayScore: 2, isLive: false },
+        { homeTeam: 'Kasımpaşa', homeScore: 1, awayTeam: 'Beşiktaş', awayScore: 1, isLive: false }
+    ];
+
+    // Firebase ayarları ve kimlik doğrulama
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = JSON.parse(__firebase_config);
+
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+
+    // Oturum açma durumunu dinleme
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            userId = user.uid;
+            console.log("Kullanıcı kimliğiyle oturum açıldı:", userId);
+        } else {
+            console.log("Kullanıcı oturum açmamış, anonim olarak oturum açılıyor...");
+            try {
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Anonim oturum açma hatası:", error);
+            }
+        }
+    });
+
+    // Sayfaya giriş yapma mantığı
+    window.checkLogin = function() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const error = document.getElementById('loginError');
+
+      if (username === "admin" && password === "1234") {
+        error.style.display = "none";
+        document.getElementById('loginModal').style.display = "none";
+        const mainContent = document.getElementById('main-content');
+        mainContent.style.display = "block";
+        setTimeout(() => mainContent.style.opacity = 1, 10);
+        document.body.style.overflow = "auto";
+        document.getElementById('countdown').style.display = "block";
+        window.showSection('anasayfa');
+        startInactivityTimer();
+        addActivityListeners();
+      } else {
+        error.style.display = "block";
+      }
+    };
+    
+    // Bölüm değiştirme
+    window.showSection = function(id) {
+      const sections = document.querySelectorAll('.content-section > div');
+      sections.forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+
+      if (id === 'quiz') startQuiz();
+      else if (id === 'canli-skorlar') fetchLiveScores();
+    };
+
+    // Boşta kalma süresi sayacı
+    function startInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      clearInterval(countdownInterval);
+      remainingTime = 60;
+      updateCountdownDisplay();
+
+      countdownInterval = setInterval(() => {
+        remainingTime--;
+        updateCountdownDisplay();
+        if (remainingTime <= 0) {
+          clearInterval(countdownInterval);
+          showMessageBox("1 dakika boyunca işlem yapılmadı. Oturum sonlandırılıyor.");
+        }
+      }, 1000);
+    }
+
+    function updateCountdownDisplay() {
+      document.getElementById('countdown').textContent = remainingTime;
+    }
+
+    function addActivityListeners() {
+      ['click', 'mousemove', 'keypress', 'scroll'].forEach(evt => {
+        document.addEventListener(evt, startInactivityTimer);
+      });
+    }
+    
+    // Tema değiştirme
+    window.toggleMode = function() {
+      const body = document.body;
+      const modeToggleButton = document.getElementById('modeToggleButton');
+      body.classList.toggle('light-mode');
+      isLightMode = body.classList.contains('light-mode');
+      modeToggleButton.textContent = isLightMode ? "Koyu Tema" : "Açık Tema";
+    };
+
+    // Quiz fonksiyonları
     function startQuiz() {
       currentQuestionIndex = 0;
       score = 0;
@@ -585,11 +535,9 @@
     }
 
     function checkAnswer(selectedOption) {
-      const questionData = quizQuestions[currentQuestionIndex];
-      if (selectedOption === questionData.answer) {
+      if (selectedOption === quizQuestions[currentQuestionIndex].answer) {
         score++;
       }
-
       currentQuestionIndex++;
       if (currentQuestionIndex < quizQuestions.length) {
         displayQuestion();
@@ -600,125 +548,101 @@
 
     function showResults() {
       const resultsEl = document.getElementById('quiz-results');
-      resultsEl.textContent = `Bilgi yarışmasını bitirdiniz! Skorunuz: ${score} / ${quizQuestions.length}`;
+      resultsEl.textContent = `Yarışmayı bitirdiniz! Skorunuz: ${score} / ${quizQuestions.length}`;
       resultsEl.classList.remove('hidden');
       document.getElementById('quiz-question').textContent = "";
       document.getElementById('quiz-options').innerHTML = "";
     }
 
-    // --- Canlı Skorlar Fonksiyonları ---
-    let mockScores = [
-        { homeTeam: 'Beşiktaş', homeScore: 3, awayTeam: 'Trabzonspor', awayScore: 1, isLive: true },
-        { homeTeam: 'Galatasaray', homeScore: 0, awayTeam: 'Fenerbahçe', awayScore: 2, isLive: false },
-        { homeTeam: 'Kasımpaşa', homeScore: 1, awayTeam: 'Beşiktaş', awayScore: 1, isLive: false }
-    ];
-
+    // Canlı skor fonksiyonları
     function fetchLiveScores() {
       const loadingEl = document.getElementById('loading-scores');
       const containerEl = document.getElementById('live-scores-container');
       loadingEl.style.display = 'block';
       containerEl.innerHTML = '';
 
-      // Mock API çağrısı simülasyonu
       setTimeout(() => {
         loadingEl.style.display = 'none';
-
-        mockScores.forEach(score => {
+        mockScores.forEach(scoreData => {
           const scoreCard = document.createElement('div');
           scoreCard.className = 'score-card';
-
-          const matchInfo = document.createElement('div');
-          matchInfo.className = 'match-info';
-
-          const homeTeamEl = document.createElement('div');
-          homeTeamEl.className = 'team-name';
-          homeTeamEl.textContent = score.homeTeam;
-
-          const scoreEl = document.createElement('div');
-          scoreEl.className = 'score';
-          scoreEl.textContent = `${score.homeScore} - ${score.awayScore}`;
-
-          const awayTeamEl = document.createElement('div');
-          awayTeamEl.className = 'team-name';
-          awayTeamEl.textContent = score.awayTeam;
-
-          matchInfo.appendChild(homeTeamEl);
-          matchInfo.appendChild(scoreEl);
-          matchInfo.appendChild(awayTeamEl);
-
-          scoreCard.appendChild(matchInfo);
-
-          if (score.isLive) {
-            const liveText = document.createElement('div');
-            liveText.className = 'live-text';
-            liveText.textContent = 'Canlı';
-            scoreCard.appendChild(liveText);
-          }
-
+          scoreCard.innerHTML = `
+            <div class="match-info">
+              <div class="team-name">${scoreData.homeTeam}</div>
+              <div class="score">${scoreData.homeScore} - ${scoreData.awayScore}</div>
+              <div class="team-name">${scoreData.awayTeam}</div>
+            </div>
+            ${scoreData.isLive ? '<div class="live-text">Canlı</div>' : ''}
+          `;
           containerEl.appendChild(scoreCard);
         });
-      }, 1500); // 1.5 saniye gecikme ile verileri yükleme
+      }, 1500);
     }
     
-    // --- Veri Kaydetme ve Yükleme Fonksiyonları ---
+    // Veri kaydetme ve yükleme
     window.saveData = async function() {
         if (!userId) {
             showMessageBox("Kaydetmek için oturum açmalısınız.");
             return;
         }
-
         try {
-            // Verileri JSON formatında kaydetme
             const dataToSave = {
                 quizQuestions: JSON.stringify(quizQuestions),
                 mockScores: JSON.stringify(mockScores),
                 lastSaved: new Date().toISOString()
             };
-
             const docRef = doc(db, `artifacts/${appId}/users/${userId}/website_data/main`);
             await setDoc(docRef, dataToSave);
-
             showMessageBox("Veriler başarıyla kaydedildi!");
         } catch (error) {
-            console.error("Veri kaydedilirken bir hata oluştu: ", error);
+            console.error("Veri kaydedilirken hata oluştu: ", error);
             showMessageBox("Veri kaydedilirken bir hata oluştu.");
         }
-    }
+    };
 
     window.loadData = async function() {
         if (!userId) {
             showMessageBox("Yüklemek için oturum açmalısınız.");
             return;
         }
-
         try {
             const docRef = doc(db, `artifacts/${appId}/users/${userId}/website_data/main`);
             const docSnap = await getDoc(docRef);
-
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                
-                // Kaydedilen verileri yükle
-                // JSON.parse ile string'den objeye çevirme
-                const loadedQuizQuestions = JSON.parse(data.quizQuestions);
-                const loadedMockScores = JSON.parse(data.mockScores);
-
-                // Global değişkenleri güncelle
-                quizQuestions.length = 0; // Diziyi temizle
-                quizQuestions.push(...loadedQuizQuestions); // Yeni verileri ekle
-
-                mockScores.length = 0; // Diziyi temizle
-                mockScores.push(...loadedMockScores); // Yeni verileri ekle
-
+                quizQuestions.length = 0;
+                quizQuestions.push(...JSON.parse(data.quizQuestions));
+                mockScores.length = 0;
+                mockScores.push(...JSON.parse(data.mockScores));
                 showMessageBox("Veriler başarıyla yüklendi!");
             } else {
                 showMessageBox("Kaydedilmiş veri bulunamadı.");
             }
         } catch (error) {
-            console.error("Veri yüklenirken bir hata oluştu: ", error);
+            console.error("Veri yüklenirken hata oluştu: ", error);
             showMessageBox("Veri yüklenirken bir hata oluştu.");
         }
-    }
+    };
+
+    // Genel yardımcı fonksiyonlar
+    window.showMessageBox = function(message) {
+        document.getElementById('messageBoxText').textContent = message;
+        document.getElementById('messageBoxModal').style.display = 'flex';
+    };
+    
+    window.closeMessageBox = function() {
+        document.getElementById('messageBoxModal').style.display = 'none';
+        location.reload();
+    };
+
+    // Giriş alanlarında Enter tuşuna basıldığında giriş yap
+    document.getElementById('password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') window.checkLogin();
+    });
+    document.getElementById('username').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') window.checkLogin();
+    });
+
   </script>
 
 </body>
