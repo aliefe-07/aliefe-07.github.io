@@ -51,24 +51,9 @@
       flex-direction: column;
       align-items: center;
       transition: background-color 0.3s ease, color 0.3s ease;
+      background-color: var(--bg-color); /* Varsayılan arka plan rengi */
     }
     
-    /* Yeni arka plan katmanı */
-    #background-layer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #212121; /* Düz renk arka plan */
-      z-index: -1;
-      transition: background-color 0.3s ease;
-    }
-    
-    body.light-mode #background-layer {
-        background-color: #f0f0f0;
-    }
-
     #main-content {
       display: none;
       opacity: 0;
@@ -77,10 +62,12 @@
       max-width: 900px;
       padding: 0 15px;
       box-sizing: border-box;
+      overflow-y: auto;
+      flex-grow: 1; /* Esnek kutu düzeninde içeriğin genişlemesini sağlar */
     }
-
+    
     header {
-      background-color: rgba(0, 0, 0, 0.7); /* Şeffaf siyah arka plan */
+      background-color: var(--header-bg-color);
       color: var(--header-text-color);
       padding: 20px;
       margin-top: 15px;
@@ -88,10 +75,11 @@
       box-shadow: 0 4px 8px var(--shadow-color);
       text-align: center;
       width: 100%;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     nav {
-      background-color: rgba(0, 0, 0, 0.7); /* Şeffaf siyah arka plan */
+      background-color: var(--header-bg-color);
       padding: 10px;
       margin-top: 15px;
       border-radius: 15px;
@@ -100,6 +88,7 @@
       justify-content: center;
       flex-wrap: wrap;
       width: 100%;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     nav button {
@@ -112,20 +101,26 @@
       cursor: pointer;
       font-size: 16px;
       font-weight: 600;
-      transition: background-color 0.3s, color 0.3s, transform 0.2s;
+      transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
     }
-
+    
     nav button:hover {
       transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    body.light-mode nav button:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     
     .content-section {
       padding: 30px;
       margin-top: 15px;
-      background-color: rgba(0, 0, 0, 0.7); /* Şeffaf siyah arka plan */
+      background-color: var(--header-bg-color);
       border-radius: 15px;
       box-shadow: 0 4px 8px var(--shadow-color);
       text-align: center;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .hidden {
@@ -136,11 +131,12 @@
       width: 100%;
       text-align: center;
       padding: 15px;
-      background-color: rgba(0, 0, 0, 0.7); /* Şeffaf siyah arka plan */
+      background-color: var(--header-bg-color);
       color: var(--header-text-color);
       margin-top: 15px;
       border-radius: 15px;
       box-shadow: 0 4px 8px var(--shadow-color);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     img {
@@ -150,6 +146,7 @@
       margin: 10px;
       border-radius: 15px;
       box-shadow: 0 4px 8px var(--shadow-color);
+      transition: box-shadow 0.3s ease;
     }
     
     #gorseller {
@@ -179,19 +176,15 @@
       width: 350px;
       max-width: 90%;
       color: var(--modal-text);
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
       animation: popIn 0.3s;
     }
 
     .modal-box h2 {
       margin-top: 0;
-      color: #fff; /* Başlık rengi sabit kalsın */
+      color: var(--modal-text);
     }
-
-    body.light-mode .modal-box h2 {
-      color: #000;
-    }
-
+    
     .modal-box input {
       width: 100%;
       padding: 12px;
@@ -211,11 +204,20 @@
       border-radius: 10px;
       cursor: pointer;
       font-size: 16px;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: background-color 0.3s, transform 0.2s, color 0.3s;
     }
 
     .modal-box button:hover {
       transform: scale(1.05);
+    }
+    
+    body.light-mode .modal-box button {
+      background-color: #000;
+      color: #fff;
+    }
+    
+    body.light-mode .modal-box button:hover {
+      background-color: #333;
     }
 
     #loginError {
@@ -238,6 +240,7 @@
       z-index: 999;
       display: none;
       box-shadow: 0 4px 8px var(--shadow-color);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
     
     #messageBoxModal {
@@ -255,26 +258,22 @@
       background-color: var(--nav-button-bg);
       color: var(--nav-button-text);
       border: 2px solid var(--nav-button-border);
-      transition: background-color 0.3s, transform 0.2s;
+      transition: background-color 0.3s, transform 0.2s, color 0.3s;
     }
 
     .quiz-options button:hover {
       transform: translateY(-2px);
     }
-
+    
     .score-card {
-      background-color: rgba(0, 0, 0, 0.7); /* Şeffaf siyah arka plan */
+      background-color: var(--header-bg-color);
       border-radius: 15px;
       padding: 20px;
       margin-bottom: 15px;
       box-shadow: 0 4px 8px var(--shadow-color);
-      transition: box-shadow 0.3s ease, transform 0.2s;
+      transition: box-shadow 0.3s ease, transform 0.2s, background-color 0.3s ease;
     }
     
-    body.light-mode .score-card {
-      background-color: rgba(255, 255, 255, 0.7); /* Şeffaf beyaz arka plan */
-    }
-
     .score-card:hover {
       transform: scale(1.02);
     }
@@ -297,10 +296,6 @@
       padding: 0 10px;
     }
 
-    body.light-mode .score {
-      color: var(--text-color);
-    }
-
     .live-text {
       color: #e53935;
       font-weight: bold;
@@ -310,17 +305,13 @@
     .transfer-card {
         display: flex;
         align-items: center;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: var(--header-bg-color);
         border-radius: 15px;
         padding: 20px;
         margin-bottom: 15px;
         box-shadow: 0 4px 8px var(--shadow-color);
-        transition: transform 0.2s;
+        transition: transform 0.2s, background-color 0.3s ease;
         text-align: left;
-    }
-    
-    body.light-mode .transfer-card {
-        background-color: rgba(255, 255, 255, 0.7);
     }
     
     .transfer-card:hover {
@@ -354,9 +345,6 @@
 </head>
 <body>
   
-  <!-- Arka plan katmanı -->
-  <div id="background-layer"></div>
-
   <!-- Admin Giriş Modalı -->
   <div id="loginModal" class="modal">
     <div id="loginBox" class="modal-box">
@@ -451,7 +439,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // Uygulama durumunu tutmak için global değişkenler
@@ -459,7 +447,7 @@
     let countdownInterval;
     let remainingTime = 60;
     let isLightMode = false;
-    let db, auth, userId;
+    let db, auth, userId, appId;
     
     // Quiz ve Canlı Skorlar için veriler
     const quizQuestions = [
@@ -493,7 +481,8 @@
 
     // Firebase ayarları ve kimlik doğrulama
     function initializeFirebase() {
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // Hata Düzeltmesi: __app_id'yi global appId değişkenine atıyoruz.
+        appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         let firebaseConfig;
         try {
             firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
@@ -502,8 +491,8 @@
             firebaseConfig = {};
         }
 
-        // Firebase yapılandırmasının geçerli olup olmadığını kontrol et
-        if (firebaseConfig && Object.keys(firebaseConfig).length > 0 && firebaseConfig.apiKey) {
+        // Hata Düzeltme: Firebase'i başlatmadan önce API anahtarının varlığını kontrol et
+        if (firebaseConfig && firebaseConfig.apiKey) {
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
@@ -516,9 +505,15 @@
                 } else {
                     console.log("Kullanıcı oturum açmamış, anonim olarak oturum açılıyor...");
                     try {
-                        await signInAnonymously(auth);
+                        // __initial_auth_token değişkeni ile oturum açmayı dene
+                        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
                     } catch (error) {
-                        console.error("Anonim oturum açma hatası:", error);
+                        console.error("Oturum açma hatası:", error);
                     }
                 }
             });
@@ -544,7 +539,6 @@
         document.getElementById('countdown').style.display = "block";
         showSection('anasayfa');
         startInactivityTimer();
-        // Hata Düzeltme: Aktivite dinleyicileri ekleniyor
         addActivityListeners();
       } else {
         error.style.display = "block";
@@ -574,11 +568,18 @@
         if (remainingTime <= 0) {
           clearInterval(countdownInterval);
           showMessageBox("1 dakika boyunca işlem yapılmadı. Oturum sonlandırılıyor.");
+          // Geri sayım bittiğinde admin girişine dön
+          document.getElementById('main-content').style.display = "none";
+          document.getElementById('loginModal').style.display = "flex";
+          document.getElementById('countdown').style.display = "none";
+          // Giriş ekranı alanlarını temizle
+          document.getElementById('username').value = '';
+          document.getElementById('password').value = '';
+          document.getElementById('loginError').style.display = 'none';
         }
       }, 1000);
     }
     
-    // Hata Düzeltme: Aktivite dinleyicileri için yeni fonksiyon
     function addActivityListeners() {
       ['click', 'mousemove', 'keypress', 'scroll'].forEach(evt => {
         document.addEventListener(evt, startInactivityTimer);
@@ -714,7 +715,6 @@
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                // Hata Düzeltme: Dizileri temizleyip yeniden dolduruyoruz
                 quizQuestions.length = 0;
                 quizQuestions.push(...JSON.parse(data.quizQuestions));
                 mockScores.length = 0;
@@ -724,7 +724,6 @@
                 showMessageBox("Kaydedilmiş veri bulunamadı.");
             }
         } catch (error) {
-            // Hata Düzeltme: Fonksiyonun doğru kapanması için hata bloğu tamamlandı
             console.error("Veri yüklenirken hata oluştu: ", error);
             showMessageBox("Veri yüklenirken bir hata oluştu.");
         }
@@ -737,7 +736,6 @@
     };
     
     function closeMessageBox() {
-        // Hata Düzeltme: Sayfa yeniden yüklenmeden mesaj kutusu kapatılıyor
         document.getElementById('messageBoxModal').style.display = 'none';
     };
     
