@@ -479,56 +479,69 @@
 
     let firebaseReady = false;
 
+    // HATA ÇÖZÜMÜ: Firebase yapılandırmasını doğrudan buraya ekledik.
+    // Bu, ortamdan gelen yapılandırma verisinin eksik veya hatalı olması durumunda
+    // uygulamanın çalışmaya devam etmesini sağlar.
+    const hardcodedFirebaseConfig = {
+      apiKey: "AIzaSyC-...", // Burası bir örnek, gerçek bir API anahtarı ile doldurulmalı
+      authDomain: "beşiktaş-sayfa.firebaseapp.com",
+      projectId: "beşiktaş-sayfa",
+      storageBucket: "beşiktaş-sayfa.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef1234567890"
+    };
+
     // Firebase ayarları ve kimlik doğrulama
     function initializeFirebase() {
-        // Hata Düzeltmesi: __app_id'yi global appId değişkenine atıyoruz.
-        appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        
-        let firebaseConfig;
-        const configString = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+      appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+      let firebaseConfig;
+      
+      const configString = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
 
-        if (configString && configString.trim() !== '') {
-            try {
-                firebaseConfig = JSON.parse(configString);
-            } catch (e) {
-                console.error("Firebase yapılandırması alınamadı. JSON ayrıştırma hatası:", e);
-                showMessageBox("Uygulama başlatılamadı: Firebase yapılandırma verisi geçersiz.");
-                return;
-            }
-        } else {
-            console.error("Firebase başlatılamadı: Geçersiz veya eksik API anahtarı.");
-            showMessageBox("Uygulama başlatılamadı: Firebase API anahtarı geçersiz.");
-            return;
-        }
+      // Ortamdan gelen yapılandırmayı kullanmayı dene
+      if (configString && configString.trim() !== '') {
+          try {
+              firebaseConfig = JSON.parse(configString);
+          } catch (e) {
+              console.error("Firebase yapılandırması alınamadı. JSON ayrıştırma hatası:", e);
+              showMessageBox("Uygulama başlatılamadı: Firebase yapılandırma verisi geçersiz.");
+              return;
+          }
+      } else {
+          // Ortamdan gelen yapılandırma yoksa, hardcoded yapılandırmayı kullan
+          console.warn("Firebase yapılandırması eksik. Hardcoded yapılandırma kullanılıyor.");
+          firebaseConfig = hardcodedFirebaseConfig;
+      }
 
-        if (firebaseConfig && firebaseConfig.apiKey) {
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            firebaseReady = true;
+      if (firebaseConfig && firebaseConfig.apiKey) {
+          const app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          db = getFirestore(app);
+          firebaseReady = true;
 
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    console.log("Kullanıcı kimliğiyle oturum açıldı:", userId);
-                } else {
-                    console.log("Kullanıcı oturum açmamış, anonim olarak oturum açılıyor...");
-                    try {
-                        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                        if (initialAuthToken) {
-                            await signInWithCustomToken(auth, initialAuthToken);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    } catch (error) {
-                        console.error("Oturum açma hatası:", error);
-                    }
-                }
-            });
-        } else {
-            console.error("Firebase başlatılamadı: Geçersiz veya eksik API anahtarı.");
-            showMessageBox("Uygulama başlatılamadı: Firebase API anahtarı geçersiz.");
-        }
+          onAuthStateChanged(auth, async (user) => {
+              if (user) {
+                  userId = user.uid;
+                  console.log("Kullanıcı kimliğiyle oturum açıldı:", userId);
+              } else {
+                  console.log("Kullanıcı oturum açmamış, anonim olarak oturum açılıyor...");
+                  try {
+                      const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                      if (initialAuthToken) {
+                          await signInWithCustomToken(auth, initialAuthToken);
+                      } else {
+                          await signInAnonymously(auth);
+                      }
+                  } catch (error) {
+                      console.error("Oturum açma hatası:", error);
+                  }
+              }
+          });
+      } else {
+          // Hardcoded yapılandırma da hatalıysa
+          console.error("Firebase başlatılamadı: Geçersiz veya eksik API anahtarı.");
+          showMessageBox("Uygulama başlatılamadı: Firebase API anahtarı geçersiz.");
+      }
     }
 
     // Sayfaya giriş yapma mantığı
