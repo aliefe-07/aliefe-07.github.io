@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Benim İlk Web Sayfam 2</title>
+  <title>Benim İlk Web Sayfam 3</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <!-- Firebase SDK'leri eklendi -->
   <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
@@ -454,7 +454,7 @@
     }
 
     // Fonksiyon, HTML'deki `onclick` için global hale getirildi
-    window.checkLogin = function() {
+    function checkLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
       const error = document.getElementById('loginError');
