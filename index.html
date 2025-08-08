@@ -483,15 +483,24 @@
     function initializeFirebase() {
         // Hata Düzeltmesi: __app_id'yi global appId değişkenine atıyoruz.
         appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
         let firebaseConfig;
-        try {
-            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        } catch (e) {
-            console.error("Firebase yapılandırması alınamadı. Hata: ", e);
-            firebaseConfig = {};
+        const configString = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+
+        if (configString && configString.trim() !== '') {
+            try {
+                firebaseConfig = JSON.parse(configString);
+            } catch (e) {
+                console.error("Firebase yapılandırması alınamadı. JSON ayrıştırma hatası:", e);
+                showMessageBox("Uygulama başlatılamadı: Firebase yapılandırma verisi geçersiz.");
+                return;
+            }
+        } else {
+            console.error("Firebase başlatılamadı: Geçersiz veya eksik API anahtarı.");
+            showMessageBox("Uygulama başlatılamadı: Firebase API anahtarı geçersiz.");
+            return;
         }
 
-        // Hata Düzeltme: Firebase'i başlatmadan önce API anahtarının varlığını kontrol et
         if (firebaseConfig && firebaseConfig.apiKey) {
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
@@ -505,7 +514,6 @@
                 } else {
                     console.log("Kullanıcı oturum açmamış, anonim olarak oturum açılıyor...");
                     try {
-                        // __initial_auth_token değişkeni ile oturum açmayı dene
                         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
                         if (initialAuthToken) {
                             await signInWithCustomToken(auth, initialAuthToken);
@@ -568,11 +576,9 @@
         if (remainingTime <= 0) {
           clearInterval(countdownInterval);
           showMessageBox("1 dakika boyunca işlem yapılmadı. Oturum sonlandırılıyor.");
-          // Geri sayım bittiğinde admin girişine dön
           document.getElementById('main-content').style.display = "none";
           document.getElementById('loginModal').style.display = "flex";
           document.getElementById('countdown').style.display = "none";
-          // Giriş ekranı alanlarını temizle
           document.getElementById('username').value = '';
           document.getElementById('password').value = '';
           document.getElementById('loginError').style.display = 'none';
@@ -741,10 +747,7 @@
     
     // Sayfa yüklendiğinde olay dinleyicilerini ayarla
     document.addEventListener('DOMContentLoaded', () => {
-      // Firebase'i başlat
       initializeFirebase();
-
-      // Admin giriş butonu ve alanları için olay dinleyicileri
       document.getElementById('loginButton').addEventListener('click', checkLogin);
       document.getElementById('password').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkLogin();
@@ -753,7 +756,6 @@
         if (e.key === 'Enter') checkLogin();
       });
       
-      // Navigasyon butonları için olay dinleyicileri
       const navButtons = document.querySelectorAll('nav button');
       navButtons.forEach(button => {
           if (button.hasAttribute('data-section')) {
@@ -761,13 +763,11 @@
           }
       });
       
-      // Diğer butonlar için olay dinleyicileri
       document.getElementById('modeToggleButton').addEventListener('click', toggleMode);
       document.getElementById('saveDataButton').addEventListener('click', saveData);
       document.getElementById('loadDataButton').addEventListener('click', loadData);
       document.getElementById('messageBoxCloseButton').addEventListener('click', closeMessageBox);
 
-      // Boşta kalma süresi dinleyicileri, sayfa yüklendiğinde bir kere başlatılıyor
       addActivityListeners();
     });
 
