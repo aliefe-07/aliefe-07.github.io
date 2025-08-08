@@ -110,7 +110,7 @@
     }
 
     body.light-mode nav button:hover {
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 44px 10px rgba(0, 0, 0, 0.2);
     }
     
     .content-section {
@@ -478,29 +478,18 @@
     ];
 
     let firebaseReady = false;
-
-    // HATA ÇÖZÜMÜ: Firebase yapılandırmasını doğrudan buraya ekledik.
-    // Bu, ortamdan gelen yapılandırma verisinin eksik veya hatalı olması durumunda
-    // uygulamanın çalışmaya devam etmesini sağlar.
-    const hardcodedFirebaseConfig = {
-      apiKey: "AIzaSyC-...", // Burası bir örnek, gerçek bir API anahtarı ile doldurulmalı
-      authDomain: "beşiktaş-sayfa.firebaseapp.com",
-      projectId: "beşiktaş-sayfa",
-      storageBucket: "beşiktaş-sayfa.appspot.com",
-      messagingSenderId: "1234567890",
-      appId: "1:1234567890:web:abcdef1234567890"
-    };
-
+    
     // Firebase ayarları ve kimlik doğrulama
     function initializeFirebase() {
+      // Ortamdan gelen app_id'yi kullan, yoksa varsayılan bir değer ata.
       appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
       let firebaseConfig;
       
       const configString = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
 
-      // Ortamdan gelen yapılandırmayı kullanmayı dene
       if (configString && configString.trim() !== '') {
           try {
+              // Ortamdan gelen yapılandırmayı kullan
               firebaseConfig = JSON.parse(configString);
           } catch (e) {
               console.error("Firebase yapılandırması alınamadı. JSON ayrıştırma hatası:", e);
@@ -508,40 +497,36 @@
               return;
           }
       } else {
-          // Ortamdan gelen yapılandırma yoksa, hardcoded yapılandırmayı kullan
-          console.warn("Firebase yapılandırması eksik. Hardcoded yapılandırma kullanılıyor.");
-          firebaseConfig = hardcodedFirebaseConfig;
-      }
-
-      if (firebaseConfig && firebaseConfig.apiKey) {
-          const app = initializeApp(firebaseConfig);
-          auth = getAuth(app);
-          db = getFirestore(app);
-          firebaseReady = true;
-
-          onAuthStateChanged(auth, async (user) => {
-              if (user) {
-                  userId = user.uid;
-                  console.log("Kullanıcı kimliğiyle oturum açıldı:", userId);
-              } else {
-                  console.log("Kullanıcı oturum açmamış, anonim olarak oturum açılıyor...");
-                  try {
-                      const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                      if (initialAuthToken) {
-                          await signInWithCustomToken(auth, initialAuthToken);
-                      } else {
-                          await signInAnonymously(auth);
-                      }
-                  } catch (error) {
-                      console.error("Oturum açma hatası:", error);
-                  }
-              }
-          });
-      } else {
-          // Hardcoded yapılandırma da hatalıysa
+          // Eğer yapılandırma yoksa, kullanıcıya bildirimde bulun ve durdur.
           console.error("Firebase başlatılamadı: Geçersiz veya eksik API anahtarı.");
-          showMessageBox("Uygulama başlatılamadı: Firebase API anahtarı geçersiz.");
+          showMessageBox("Uygulama başlatılamadı: Firebase yapılandırması eksik. Lütfen geçerli bir API anahtarı sağlayın.");
+          return;
       }
+
+      const app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      firebaseReady = true;
+
+      onAuthStateChanged(auth, async (user) => {
+          if (user) {
+              userId = user.uid;
+              console.log("Kullanıcı kimliğiyle oturum açıldı:", userId);
+          } else {
+              console.log("Kullanıcı oturum açmamış, anonim olarak oturum açılıyor...");
+              try {
+                  const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                  if (initialAuthToken) {
+                      await signInWithCustomToken(auth, initialAuthToken);
+                  } else {
+                      await signInAnonymously(auth);
+                  }
+              } catch (error) {
+                  console.error("Oturum açma hatası:", error);
+                  showMessageBox("Oturum açma sırasında bir hata oluştu: " + error.message);
+              }
+          }
+      });
     }
 
     // Sayfaya giriş yapma mantığı
