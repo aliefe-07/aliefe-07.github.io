@@ -311,7 +311,7 @@
       <h2>Admin Girişi</h2>
       <input type="text" id="username" placeholder="Kullanıcı Adı" autocomplete="off" />
       <input type="password" id="password" placeholder="Şifre" autocomplete="off" />
-      <button onclick="window.checkLogin()">Giriş Yap</button>
+      <button id="loginButton">Giriş Yap</button>
       <div id="loginError">Kullanıcı adı veya şifre hatalı!</div>
     </div>
   </div>
@@ -320,7 +320,7 @@
   <div id="messageBoxModal" class="modal">
     <div class="modal-box">
       <h3 id="messageBoxText"></h3>
-      <button onclick="window.closeMessageBox()">Tamam</button>
+      <button id="messageBoxCloseButton">Tamam</button>
     </div>
   </div>
 
@@ -330,15 +330,15 @@
     </header>
 
     <nav>
-      <button onclick="window.showSection('anasayfa')">Anasayfa</button>
-      <button onclick="window.showSection('hakkimizda')">Hakkımızda</button>
-      <button onclick="window.showSection('iletisim')">İletişim</button>
-      <button onclick="window.showSection('gorseller')">Görseller</button>
-      <button onclick="window.showSection('quiz')">Bilgi Yarışması</button>
-      <button onclick="window.showSection('canli-skorlar')">Canlı Skorlar</button>
-      <button id="modeToggleButton" onclick="window.toggleMode()">Açık Tema</button>
-      <button onclick="window.saveData()">Kaydet</button>
-      <button onclick="window.loadData()">Yükle</button>
+      <button data-section="anasayfa">Anasayfa</button>
+      <button data-section="hakkimizda">Hakkımızda</button>
+      <button data-section="iletisim">İletişim</button>
+      <button data-section="gorseller">Görseller</button>
+      <button data-section="quiz">Bilgi Yarışması</button>
+      <button data-section="canli-skorlar">Canlı Skorlar</button>
+      <button id="modeToggleButton">Açık Tema</button>
+      <button id="saveDataButton">Kaydet</button>
+      <button id="loadDataButton">Yükle</button>
     </nav>
 
     <div class="content-section">
@@ -390,7 +390,7 @@
     let remainingTime = 60;
     let isLightMode = false;
     let db, auth, userId;
-
+    
     // Quiz ve Canlı Skorlar için veriler
     const quizQuestions = [
       {
@@ -421,7 +421,14 @@
 
     // Firebase ayarları ve kimlik doğrulama
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = JSON.parse(__firebase_config);
+    
+    let firebaseConfig;
+    try {
+        firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    } catch (e) {
+        console.error("Firebase yapılandırması alınamadı. Hata: ", e);
+        firebaseConfig = {};
+    }
 
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
@@ -443,7 +450,7 @@
     });
 
     // Sayfaya giriş yapma mantığı
-    window.checkLogin = function() {
+    function checkLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
       const error = document.getElementById('loginError');
@@ -456,16 +463,15 @@
         setTimeout(() => mainContent.style.opacity = 1, 10);
         document.body.style.overflow = "auto";
         document.getElementById('countdown').style.display = "block";
-        window.showSection('anasayfa');
+        showSection('anasayfa');
         startInactivityTimer();
-        addActivityListeners();
       } else {
         error.style.display = "block";
       }
     };
     
     // Bölüm değiştirme
-    window.showSection = function(id) {
+    function showSection(id) {
       const sections = document.querySelectorAll('.content-section > div');
       sections.forEach(sec => sec.classList.add('hidden'));
       document.getElementById(id).classList.remove('hidden');
@@ -492,17 +498,12 @@
     }
 
     function updateCountdownDisplay() {
-      document.getElementById('countdown').textContent = remainingTime;
-    }
-
-    function addActivityListeners() {
-      ['click', 'mousemove', 'keypress', 'scroll'].forEach(evt => {
-        document.addEventListener(evt, startInactivityTimer);
-      });
+      const countdownEl = document.getElementById('countdown');
+      if(countdownEl) countdownEl.textContent = remainingTime;
     }
     
     // Tema değiştirme
-    window.toggleMode = function() {
+    function toggleMode() {
       const body = document.body;
       const modeToggleButton = document.getElementById('modeToggleButton');
       body.classList.toggle('light-mode');
@@ -523,13 +524,18 @@
       const questionEl = document.getElementById('quiz-question');
       const optionsEl = document.getElementById('quiz-options');
       
+      if (!questionData) {
+        showResults();
+        return;
+      }
+      
       questionEl.textContent = questionData.question;
       optionsEl.innerHTML = '';
       
       questionData.options.forEach(option => {
         const button = document.createElement('button');
         button.textContent = option;
-        button.onclick = () => checkAnswer(option);
+        button.addEventListener('click', () => checkAnswer(option));
         optionsEl.appendChild(button);
       });
     }
@@ -558,6 +564,8 @@
     function fetchLiveScores() {
       const loadingEl = document.getElementById('loading-scores');
       const containerEl = document.getElementById('live-scores-container');
+      if (!loadingEl || !containerEl) return;
+
       loadingEl.style.display = 'block';
       containerEl.innerHTML = '';
 
@@ -580,7 +588,7 @@
     }
     
     // Veri kaydetme ve yükleme
-    window.saveData = async function() {
+    async function saveData() {
         if (!userId) {
             showMessageBox("Kaydetmek için oturum açmalısınız.");
             return;
@@ -600,7 +608,7 @@
         }
     };
 
-    window.loadData = async function() {
+    async function loadData() {
         if (!userId) {
             showMessageBox("Yüklemek için oturum açmalısınız.");
             return;
@@ -625,22 +633,45 @@
     };
 
     // Genel yardımcı fonksiyonlar
-    window.showMessageBox = function(message) {
+    function showMessageBox(message) {
         document.getElementById('messageBoxText').textContent = message;
         document.getElementById('messageBoxModal').style.display = 'flex';
     };
     
-    window.closeMessageBox = function() {
+    function closeMessageBox() {
         document.getElementById('messageBoxModal').style.display = 'none';
         location.reload();
     };
+    
+    // Sayfa yüklendiğinde olay dinleyicilerini ayarla
+    document.addEventListener('DOMContentLoaded', () => {
+      // Admin giriş butonu ve alanları için olay dinleyicileri
+      document.getElementById('loginButton').addEventListener('click', checkLogin);
+      document.getElementById('password').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkLogin();
+      });
+      document.getElementById('username').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkLogin();
+      });
+      
+      // Navigasyon butonları için olay dinleyicileri
+      const navButtons = document.querySelectorAll('nav button');
+      navButtons.forEach(button => {
+          if (button.hasAttribute('data-section')) {
+              button.addEventListener('click', () => showSection(button.getAttribute('data-section')));
+          }
+      });
+      
+      // Diğer butonlar için olay dinleyicileri
+      document.getElementById('modeToggleButton').addEventListener('click', toggleMode);
+      document.getElementById('saveDataButton').addEventListener('click', saveData);
+      document.getElementById('loadDataButton').addEventListener('click', loadData);
+      document.getElementById('messageBoxCloseButton').addEventListener('click', closeMessageBox);
 
-    // Giriş alanlarında Enter tuşuna basıldığında giriş yap
-    document.getElementById('password').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') window.checkLogin();
-    });
-    document.getElementById('username').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') window.checkLogin();
+      // Boşta kalma süresi dinleyicileri
+      ['click', 'mousemove', 'keypress', 'scroll'].forEach(evt => {
+        document.addEventListener(evt, startInactivityTimer);
+      });
     });
 
   </script>
